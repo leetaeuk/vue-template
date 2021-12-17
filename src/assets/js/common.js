@@ -148,19 +148,57 @@ const CommonPlugin = {
                 },
                 openPopup : function(pageId, params)
                 {
-                    vm.params          = params
-                    vm.dialogComponent = async () => (await import(`@${pageId}.vue`)).default
-                    vm.isOpen          = true
+                    //vm.dialogComponent = async () => (await import(`@/views${pageId}.vue`)).default
+                    //vm.params          = params;
+                    //vm.isOpen          = true;
+
+                    let dialogComponent = async () => (await import(`@/views${pageId}.vue`)).default;
+                    vm.$store.commit("openPopup", {
+                        vm:vm,
+                        params:params,
+                        screen:true,
+                        isOverlay:false,
+                        scrollable:true,
+                        transition:"dialog-bottom-transition",
+                        component:dialogComponent
+                    });
                 },
                 closePopup : function(params)
                 {
                     if( params )
                     {
-                        vm.$emit('closeCallback', params);
+                        //vm.$emit('closeCallback', params);
+                        vm.$store.commit("closePopup", params);
                     }
                     else
                     {
-                        vm.isOpen = false;
+                        //vm.isOpen = false;
+                        vm.$store.commit("closePopup");
+                    }
+                },
+                alert : function(params)
+                {
+                    let dialogComponent = async () => (await import(`@/views/common/alert.vue`)).default;
+                    vm.$store.commit("openPopup", {
+                        vm:vm,
+                        params:params,
+                        screen:false,
+                        persistent:true,
+                        maxWidth:500,
+                        component:dialogComponent
+                    });
+                },
+                closeAlert : function(params)
+                {
+                    if( params )
+                    {
+                        //vm.$emit('closeCallback', params);
+                        vm.$store.commit("closePopup", params);
+                    }
+                    else
+                    {
+                        //vm.isOpen = false;
+                        vm.$store.commit("closePopup");
                     }
                 }
             };

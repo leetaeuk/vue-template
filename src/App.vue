@@ -1,5 +1,23 @@
 <template>
     <component :is="resolveLayout">
+        <!-- 공통영역에 띄울 팝업컴포넌트 정의 -->
+        <v-dialog
+            v-model="this.$store.state.dialog.isOpen"
+            :fullscreen="this.$store.state.dialog.screen"
+            :persistent="this.$store.state.dialog.persistent"
+            :max-width="this.$store.state.dialog.maxWidth"
+            :hide-overlay="this.$store.state.dialog.isOverlay"
+            :transition="this.$store.state.dialog.transition"
+            :scrollable="this.$store.state.dialog.scrollable"
+        >
+            <component
+                v-if="this.$store.state.dialog.component"
+                :is="this.$store.state.dialog.component"
+                :params="this.$store.state.dialog.params"
+            >
+            </component>
+        </v-dialog>
+
         <router-view></router-view>
     </component>
 </template>

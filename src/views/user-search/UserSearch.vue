@@ -34,7 +34,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="item in desserts" :key="item.dessert">
+                        <tr v-for="item in desserts" :key="item.dessert" @click.prevent="uf_open">
                             <td class="text-center">{{ item.dessert }}</td>
                             <td class="text-center">{{ item.calories }}</td>
                             <td class="text-left">{{ item.fat }}</td>
@@ -60,7 +60,13 @@ export default {
             searchType    : "01",
             search_reason : "",
             user_info     : "",
-            desserts      : []
+            desserts      : [],
+            //
+            /*
+            isOpen : false,
+            params : null,
+            dialogComponent : null,
+            */
         }
     },
     methods : {
@@ -74,6 +80,7 @@ export default {
         },
         uf_search : function()
         {
+            this.$common().alert();
             this.desserts = [
                 {
                     dessert: "INT",
@@ -92,6 +99,13 @@ export default {
             ];
 
             this.isSearch = true;
+        },
+        uf_open : function ()
+        {
+            this.$common().openPopup("/user-search/UserDetail");
+        },
+        closeCallback : function(params)
+        {
         }
     }
 }

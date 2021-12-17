@@ -1,8 +1,8 @@
 {
-  "name": "vue-admin",
+  "name": "e-Biz",
   "version": "0.0.1",
   "private": false,
-  "description": "vue-admin",
+  "description": "e-Biz",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
