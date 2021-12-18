@@ -146,61 +146,79 @@ const CommonPlugin = {
                         }
                     }
                 },
-                openPopup : function(pageId, params)
+                /**
+                 * dialog 띄우기(팝업, alert ...)
+                 * @param pageId
+                 * @param args
+                 */
+                openPopup : function(pageId, ...args)
                 {
-                    //vm.dialogComponent = async () => (await import(`@/views${pageId}.vue`)).default
-                    //vm.params          = params;
-                    //vm.isOpen          = true;
-
-                    let dialogComponent = async () => (await import(`@/views${pageId}.vue`)).default;
-                    vm.$store.commit("openPopup", {
+                    let params   = null;
+                    let options  = {
+                        dialogType:"dialog",
                         vm:vm,
-                        params:params,
-                        screen:true,
+                        //params:params,
+                        fullscreen:true,
                         isOverlay:false,
                         scrollable:true,
+                        persistent:true,
                         transition:"dialog-bottom-transition",
-                        component:dialogComponent
-                    });
+                        //callback:callback,
+                        //component:dialogComponent
+                    };
+
+                    let callback = null;
+                    if( args.length > 0 )
+                    {
+                        for( let idx=0; idx<args.length; idx++ )
+                        {
+                            if( typeof args[idx] === "object" && Object.keys(args[idx]).includes('dialogType') )
+                            {
+                                options = args[idx];
+                            }
+                            else if( typeof args[idx] === "object" )
+                            {
+                                params = args[idx];
+                            }
+                            else if( typeof args[idx] === "function" )
+                            {
+                                callback = args[idx];
+                            }
+                        }
+                    }
+
+                    let dialogComponent = async () => (await import(`@/${pageId}.vue`)).default;
+                    options.params    = params;
+                    options.callback  = callback;
+                    options.component = dialogComponent;
+
+                    vm.$store.commit("openPopup", options);
                 },
+                /**
+                 * 팝업종료
+                 * @param params
+                 */
                 closePopup : function(params)
                 {
-                    if( params )
-                    {
-                        //vm.$emit('closeCallback', params);
-                        vm.$store.commit("closePopup", params);
-                    }
-                    else
-                    {
-                        //vm.isOpen = false;
-                        vm.$store.commit("closePopup");
-                    }
+                    vm.$store.commit("closePopup", params);
                 },
-                alert : function(params)
+                /**
+                 * alert 띄우기(openPopup에 종속됨)
+                 * @param params
+                 * @param callback
+                 */
+                alert : function(params, callback)
                 {
-                    let dialogComponent = async () => (await import(`@/views/common/alert.vue`)).default;
-                    vm.$store.commit("openPopup", {
+                    let options = {
+                        dialogType:"alert",
                         vm:vm,
                         params:params,
-                        screen:false,
+                        fullscreen:false,
                         persistent:true,
                         maxWidth:500,
-                        component:dialogComponent
-                    });
+                    }
+                    this.openPopup("components/Alert", params, callback, options)
                 },
-                closeAlert : function(params)
-                {
-                    if( params )
-                    {
-                        //vm.$emit('closeCallback', params);
-                        vm.$store.commit("closePopup", params);
-                    }
-                    else
-                    {
-                        //vm.isOpen = false;
-                        vm.$store.commit("closePopup");
-                    }
-                }
             };
         };
     }

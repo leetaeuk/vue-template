@@ -108,6 +108,7 @@ export default {
     name: "UserDetail",
     props: {
         isOpen: {type: Boolean, default: false},
+        params: {type: Object, default: false},
     },
     setup() {
         return {
@@ -150,11 +151,15 @@ export default {
     methods: {
         closeDialog() {
             let param = {A: "1"}
-            this.$common().closePopup(param);
+            //this.$common().closePopup(param);
+            this.$common().alert({message:"데이터를 확인하세요"});
         },
         close() {
             //this.$emit('close');
             this.$common().closePopup();
+        },
+        closeCallback : function(params)
+        {
         }
     }
 }

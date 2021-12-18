@@ -2,24 +2,53 @@
     <v-card>
         <v-card-title>사용자조회</v-card-title>
 
+        <!---------------------------------------------------->
+        <!-- 입력 영역 시작 -->
+        <!---------------------------------------------------->
+        <!-- 입력정보 -->
         <v-row class="ma-0 px-2">
             <v-col cols="12">
                 <v-radio-group v-model="searchType" row class="mt-0" hide-details>
                     <v-radio value="01" label="사용자ID"></v-radio>
-                    <v-radio value="02" label="행번"></v-radio>
+                    <v-radio value="02" label="고객번호"></v-radio>
                 </v-radio-group>
-                <v-text-field v-model="user_info" class="mt-5" :label="searchType == '01' ? '사용자ID' : '행번'" dense outlined ></v-text-field>
-                <v-select v-model="search_reason" outlined dense label="조회사유" :items="['고객요청','여신심사']"></v-select>
+            </v-col>
+
+            <v-col cols="12">
+                <v-form>
+                    <v-text-field v-model="user_info" :prepend-inner-icon="icons.mdiAccountOutline" dense outlined :label="searchType == '01' ? '사용자ID' : '고객번호'"></v-text-field>
+                </v-form>
+            </v-col>
+
+            <v-col cols="12">
+                <v-form>
+                    <v-select v-model="search_reason" :prepend-inner-icon="icons.mdiFileMultipleOutline" outlined dense label="조회사유" :items="['고객요청','여신심사']"></v-select>
+                </v-form>
+            </v-col>
+
+            <v-col sm="6" cols="12">
+                <Calendar ref="sdt" :date="new Date().toISOString().substr(0, 10)" label="조회시작일자"></Calendar>
+            </v-col>
+            <v-col sm="6" cols="12">
+                <Calendar ref="edt" :date="new Date().toISOString().substr(0, 10)" label="조회종료일자"></Calendar>
             </v-col>
         </v-row>
 
+        <!-- 실행버튼 -->
         <v-row class="ma-0 pb-5 px-2">
             <v-col cols="12">
                 <v-btn color="primary" class="me-3" @click.prevent="uf_search">조회</v-btn>
                 <v-btn color="error" outlined type="reset" @click.prevent="uf_reset">초기화</v-btn>
             </v-col>
         </v-row>
+        <!---------------------------------------------------->
+        <!-- 입력 영역 종료 -->
+        <!---------------------------------------------------->
 
+
+        <!---------------------------------------------------->
+        <!-- 실행결과 영역 시작 -->
+        <!---------------------------------------------------->
         <v-row class="ma-0 px-2" v-show="isSearch">
             <v-col cols="12">
                 <v-simple-table height="250" fixed-header>
@@ -34,7 +63,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="item in desserts" :key="item.dessert" @click.prevent="uf_open">
+                        <tr v-for="item in desserts" :key="item.desserts" :value="JSON.stringify(item)" @click.prevent="uf_open">
                             <td class="text-center">{{ item.dessert }}</td>
                             <td class="text-center">{{ item.calories }}</td>
                             <td class="text-left">{{ item.fat }}</td>
@@ -46,14 +75,16 @@
                 </v-simple-table>
             </v-col>
         </v-row>
+        <!---------------------------------------------------->
+        <!-- 실행결과 영역 종료 -->
+        <!---------------------------------------------------->
     </v-card>
 </template>
 
 <script>
-export default {
-    setup() {
+import { mdiAccountOutline, mdiFileMultipleOutline } from '@mdi/js'
 
-    },
+export default {
     data() {
         return {
             isSearch      : false,
@@ -61,12 +92,11 @@ export default {
             search_reason : "",
             user_info     : "",
             desserts      : [],
-            //
-            /*
-            isOpen : false,
-            params : null,
-            dialogComponent : null,
-            */
+            // icons
+            icons: {
+                mdiAccountOutline,
+                mdiFileMultipleOutline,
+            },
         }
     },
     methods : {
@@ -77,10 +107,12 @@ export default {
             this.search_reason = "";
             this.user_info     = "";
             this.desserts      = [];
+
+            this.$refs.sdt.init();
+            this.$refs.edt.init();
         },
         uf_search : function()
         {
-            this.$common().alert();
             this.desserts = [
                 {
                     dessert: "INT",
@@ -98,14 +130,22 @@ export default {
                 },
             ];
 
+            //alert(this.$refs.sdt.day)
             this.isSearch = true;
         },
-        uf_open : function ()
+        uf_open : function (e)
         {
-            this.$common().openPopup("/user-search/UserDetail");
+            //alert(e.currentTarget.getAttribute("value"))
+            /*
+            this.$common().openPopup("/user-search/UserDetail", {a:"1"}, function () {
+                alert(1)
+            });
+            */
+            this.$common().openPopup("views/user-search/UserDetail", {a:"1"});
         },
         closeCallback : function(params)
         {
+            alert(JSON.stringify(params))
         }
     }
 }

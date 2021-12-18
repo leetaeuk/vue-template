@@ -2,18 +2,19 @@
     <component :is="resolveLayout">
         <!-- 공통영역에 띄울 팝업컴포넌트 정의 -->
         <v-dialog
-            v-model="this.$store.state.dialog.isOpen"
-            :fullscreen="this.$store.state.dialog.screen"
-            :persistent="this.$store.state.dialog.persistent"
-            :max-width="this.$store.state.dialog.maxWidth"
-            :hide-overlay="this.$store.state.dialog.isOverlay"
-            :transition="this.$store.state.dialog.transition"
-            :scrollable="this.$store.state.dialog.scrollable"
+            v-for="component in this.$store.state.dialog"
+            v-model       = "component.isOpen"
+            :fullscreen   = "component.fullscreen"
+            :persistent   = "component.persistent"
+            :max-width    = "component.maxWidth"
+            :hide-overlay = "component.isOverlay"
+            :transition   = "component.transition"
+            :scrollable   = "component.scrollable"
         >
             <component
-                v-if="this.$store.state.dialog.component"
-                :is="this.$store.state.dialog.component"
-                :params="this.$store.state.dialog.params"
+                v-if    = "component.component"
+                :is     = "component.component"
+                :params = "component.params"
             >
             </component>
         </v-dialog>

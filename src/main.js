@@ -7,11 +7,14 @@ import router from './router'
 import store from './store'
 import common from '@/assets/js/common';
 import axios from "@/plugins/axios";
+import calendar from '@/components/Calendar.vue'
 
 Vue.config.productionTip = false
 
 Vue.use(common);
 Vue.use(axios);
+
+Vue.component("Calendar", calendar)
 
 new Vue({
   router,
