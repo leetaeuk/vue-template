@@ -219,6 +219,33 @@ const CommonPlugin = {
                     }
                     this.openPopup("/components/Alert", params, callback, options)
                 },
+                /**
+                 * 로딩바 호출 및 종료
+                 * @param params
+                 * @param callback
+                 */
+                loading : function(params, callback)
+                {
+                    let options = {
+                        dialogType:"loading",
+                        vm:vm,
+                        params:params,
+                        fullscreen:false,
+                        persistent:true,
+                        maxWidth:300,
+                    }
+
+                    if( params && params.isLoading === false )
+                    {
+                        vm[params.value] = false;
+                        this.closePopup();
+                    }
+                    else
+                    {
+                        vm[params.value] = true;
+                        this.openPopup("/components/Loading", params, callback, options)
+                    }
+                }
             };
         };
     }
