@@ -16,18 +16,56 @@
                 </v-col>
 
                 <v-col cols="12">
-                    <v-text-field :rules="nameRules" required hide-details="auto" v-model="user_info" :prepend-inner-icon="icons.mdiAccountOutline" dense outlined :label="searchType == '01' ? '사용자ID' : '고객번호'"></v-text-field>
+                    <v-text-field
+                        v-model="user_info"
+                        :rules="[
+                            v => !!v || (searchType == '01' ? '사용자ID' : '고객번호') + '는 필수 입력사항입니다.',
+                            v => (v && v.length <= 10) || (searchType == '01' ? '사용자ID' : '고객번호') + '는 10자리 이하로 입력하세요',
+                        ]"
+                        required hide-details="auto"
+                        :prepend-inner-icon="icons.mdiAccountOutline" dense outlined
+                        :label="searchType == '01' ? '사용자ID' : '고객번호'"
+                    >
+                    </v-text-field>
                 </v-col>
 
                 <v-col cols="12">
-                    <v-select :rules="nameRules" required hide-details="auto" v-model="search_reason" :prepend-inner-icon="icons.mdiFileMultipleOutline" outlined dense label="조회사유" :items="['고객요청','여신심사']"></v-select>
+                    <v-select
+                        v-model="search_reason"
+                        :rules="[
+                            v => !!v || '조회사유는 필수 입력사항입니다.',
+                        ]"
+                        required hide-details="auto"
+                        :prepend-inner-icon="icons.mdiFileMultipleOutline" outlined dense
+                        label="조회사유"
+                        :items="['고객요청','여신심사']"
+                    >
+                    </v-select>
                 </v-col>
 
                 <v-col sm="6" cols="12">
-                    <Calendar ref="sdt" :date="new Date().toISOString().substr(0, 10)" label="조회시작일자"></Calendar>
+                    <Calendar
+                        ref="sdt"
+                        :rules="[
+                            v => !!v || '조회시작일자는 필수 입력사항입니다.',
+                        ]"
+                        required hide-details="auto"
+                        :date="new Date().toISOString().substr(0, 10)"
+                        label="조회시작일자"
+                    >
+                    </Calendar>
                 </v-col>
                 <v-col sm="6" cols="12">
-                    <Calendar ref="edt" :date="new Date().toISOString().substr(0, 10)" label="조회종료일자"></Calendar>
+                    <Calendar
+                        ref="edt"
+                        :rules="[
+                            v => !!v || '조회종료일자는 필수 입력사항입니다.',
+                        ]"
+                        required hide-details="auto"
+                        :date="new Date().toISOString().substr(0, 10)"
+                        label="조회종료일자"
+                    >
+                    </Calendar>
                 </v-col>
             </v-row>
         </v-form>
@@ -35,7 +73,7 @@
         <!-- 실행버튼 -->
         <v-row class="ma-0 pb-5 px-2">
             <v-col cols="12">
-                <v-btn color="primary" class="me-3" @click.prevent="uf_search">조회</v-btn>
+                <v-btn color="primary" :disabled="isTrxLoading" :loading="isTrxLoading" class="me-3" @click.prevent="uf_search">조회</v-btn>
                 <v-btn color="error" outlined type="reset" @click.prevent="uf_reset">초기화</v-btn>
             </v-col>
         </v-row>
@@ -84,13 +122,8 @@ import { mdiAccountOutline, mdiFileMultipleOutline } from '@mdi/js'
 
 export default {
     data() {
-        const nameRules = [
-            v => !!v || 'Name is required',
-            v => (v && v.length <= 10) || 'Name must be less than 10 characters',
-        ]
         return {
-            nameRules,
-
+            isTrxLoading  : false,
             isSearch      : false,
             searchType    : "01",
             search_reason : "",
@@ -108,6 +141,7 @@ export default {
         {
             this.$refs.form.resetValidation();
 
+            this.isTrxLoading  = false;
             this.isSearch      = false;
             this.searchType    = "01";
             this.search_reason = "";
@@ -119,27 +153,34 @@ export default {
         },
         uf_search : function()
         {
+            this.isSearch = false;
             if( this.$refs.form.validate() )
             {
-                this.desserts = [
-                    {
-                        dessert: "INT",
-                        calories: "이태욱",
-                        fat: "KINDLY007",
-                        carbs: "123456789-1001",
-                        protein: "OTP(033123123)",
-                    },
-                    {
-                        dessert: 'PON',
-                        calories: "이태욱",
-                        fat: "KINDLY007",
-                        carbs: "123456789-1001",
-                        protein: "보안카드(033123123)",
-                    },
-                ];
+                //this.isTrxLoading = true;
+                this.$common().loading({isLoading:true, value:"isTrxLoading"});
 
-                //alert(this.$refs.sdt.day)
-                this.isSearch = true;
+                setTimeout(()=> {
+                    this.desserts = [
+                        {
+                            dessert: "INT",
+                            calories: "이태욱",
+                            fat: "KINDLY007",
+                            carbs: "123456789-1001",
+                            protein: "OTP(033123123)",
+                        },
+                        {
+                            dessert: 'PON',
+                            calories: "이태욱",
+                            fat: "KINDLY007",
+                            carbs: "123456789-1001",
+                            protein: "보안카드(033123123)",
+                        },
+                    ];
+
+                    //alert(this.$refs.sdt.day)
+                    this.isSearch = true;
+                    this.$common().loading({isLoading:false, value:"isTrxLoading"});
+                }, 2000);
             }
 
         },
