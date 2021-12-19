@@ -6,33 +6,31 @@
         <!-- 입력 영역 시작 -->
         <!---------------------------------------------------->
         <!-- 입력정보 -->
-        <v-row class="ma-0 px-2">
-            <v-col cols="12">
-                <v-radio-group v-model="searchType" row class="mt-0" hide-details>
-                    <v-radio value="01" label="사용자ID"></v-radio>
-                    <v-radio value="02" label="고객번호"></v-radio>
-                </v-radio-group>
-            </v-col>
+        <v-form ref="form" lazy-validation>
+            <v-row class="ma-0 px-2">
+                <v-col cols="12">
+                    <v-radio-group v-model="searchType" row class="mt-0" hide-details>
+                        <v-radio value="01" label="사용자ID"></v-radio>
+                        <v-radio value="02" label="고객번호"></v-radio>
+                    </v-radio-group>
+                </v-col>
 
-            <v-col cols="12">
-                <v-form>
-                    <v-text-field v-model="user_info" :prepend-inner-icon="icons.mdiAccountOutline" dense outlined :label="searchType == '01' ? '사용자ID' : '고객번호'"></v-text-field>
-                </v-form>
-            </v-col>
+                <v-col cols="12">
+                    <v-text-field :rules="nameRules" required hide-details="auto" v-model="user_info" :prepend-inner-icon="icons.mdiAccountOutline" dense outlined :label="searchType == '01' ? '사용자ID' : '고객번호'"></v-text-field>
+                </v-col>
 
-            <v-col cols="12">
-                <v-form>
-                    <v-select v-model="search_reason" :prepend-inner-icon="icons.mdiFileMultipleOutline" outlined dense label="조회사유" :items="['고객요청','여신심사']"></v-select>
-                </v-form>
-            </v-col>
+                <v-col cols="12">
+                    <v-select :rules="nameRules" required hide-details="auto" v-model="search_reason" :prepend-inner-icon="icons.mdiFileMultipleOutline" outlined dense label="조회사유" :items="['고객요청','여신심사']"></v-select>
+                </v-col>
 
-            <v-col sm="6" cols="12">
-                <Calendar ref="sdt" :date="new Date().toISOString().substr(0, 10)" label="조회시작일자"></Calendar>
-            </v-col>
-            <v-col sm="6" cols="12">
-                <Calendar ref="edt" :date="new Date().toISOString().substr(0, 10)" label="조회종료일자"></Calendar>
-            </v-col>
-        </v-row>
+                <v-col sm="6" cols="12">
+                    <Calendar ref="sdt" :date="new Date().toISOString().substr(0, 10)" label="조회시작일자"></Calendar>
+                </v-col>
+                <v-col sm="6" cols="12">
+                    <Calendar ref="edt" :date="new Date().toISOString().substr(0, 10)" label="조회종료일자"></Calendar>
+                </v-col>
+            </v-row>
+        </v-form>
 
         <!-- 실행버튼 -->
         <v-row class="ma-0 pb-5 px-2">
@@ -86,7 +84,13 @@ import { mdiAccountOutline, mdiFileMultipleOutline } from '@mdi/js'
 
 export default {
     data() {
+        const nameRules = [
+            v => !!v || 'Name is required',
+            v => (v && v.length <= 10) || 'Name must be less than 10 characters',
+        ]
         return {
+            nameRules,
+
             isSearch      : false,
             searchType    : "01",
             search_reason : "",
@@ -102,6 +106,8 @@ export default {
     methods : {
         uf_reset : function()
         {
+            this.$refs.form.resetValidation();
+
             this.isSearch      = false;
             this.searchType    = "01";
             this.search_reason = "";
@@ -113,25 +119,29 @@ export default {
         },
         uf_search : function()
         {
-            this.desserts = [
-                {
-                    dessert: "INT",
-                    calories: "이태욱",
-                    fat: "KINDLY007",
-                    carbs: "123456789-1001",
-                    protein: "OTP(033123123)",
-                },
-                {
-                    dessert: 'PON',
-                    calories: "이태욱",
-                    fat: "KINDLY007",
-                    carbs: "123456789-1001",
-                    protein: "보안카드(033123123)",
-                },
-            ];
+            if( this.$refs.form.validate() )
+            {
+                this.desserts = [
+                    {
+                        dessert: "INT",
+                        calories: "이태욱",
+                        fat: "KINDLY007",
+                        carbs: "123456789-1001",
+                        protein: "OTP(033123123)",
+                    },
+                    {
+                        dessert: 'PON',
+                        calories: "이태욱",
+                        fat: "KINDLY007",
+                        carbs: "123456789-1001",
+                        protein: "보안카드(033123123)",
+                    },
+                ];
 
-            //alert(this.$refs.sdt.day)
-            this.isSearch = true;
+                //alert(this.$refs.sdt.day)
+                this.isSearch = true;
+            }
+
         },
         uf_open : function (e)
         {
