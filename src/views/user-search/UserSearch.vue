@@ -151,7 +151,7 @@ export default {
                 alert(1)
             });
             */
-            this.$common().openPopup("views/user-search/UserDetail", {a:"1"});
+            this.$common().openPopup("/views/user-search/UserDetail", {a:"1"});
         },
         closeCallback : function(params)
         {
