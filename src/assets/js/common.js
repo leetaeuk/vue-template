@@ -187,7 +187,7 @@ const CommonPlugin = {
                         }
                     }
 
-                    let dialogComponent = async () => (await import(`@/${pageId}.vue`)).default;
+                    let dialogComponent = async () => (await import(`@/${pageId.substring(1)}.vue`)).default;
                     options.params    = params;
                     options.callback  = callback;
                     options.component = dialogComponent;
@@ -217,7 +217,7 @@ const CommonPlugin = {
                         persistent:true,
                         maxWidth:500,
                     }
-                    this.openPopup("components/Alert", params, callback, options)
+                    this.openPopup("/components/Alert", params, callback, options)
                 },
             };
         };
