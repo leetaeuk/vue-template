@@ -622,6 +622,15 @@ $btn-custom-heights: (
   display: none;
 }
 */
+.v-messages__message {
+  line-height: 14px !important;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
+}
 
 //
 //* ——— Slider ——————————————————
