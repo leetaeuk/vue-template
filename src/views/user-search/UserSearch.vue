@@ -157,7 +157,7 @@ export default {
             if( this.$refs.form.validate() )
             {
                 //this.isTrxLoading = true;
-                this.$common().loading({isLoading:true, value:"isTrxLoading"});
+                this.$common().loading({isLoading:true, message:"사용자데이터 조회중입니다...", value:"isTrxLoading"});
 
                 setTimeout(()=> {
                     this.desserts = [
